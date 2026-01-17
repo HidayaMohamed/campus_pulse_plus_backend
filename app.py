@@ -285,3 +285,18 @@ def get_post(id):
        if post.admin_responses
        else None,
    }
+@app.route("/api/posts", methods=["POST"])
+def create_post():
+   data = request.get_json()
+   if not data.get("content"):
+       return {"error": "Content required"}, 400
+   image = data.get("image")
+   post = Post(
+       content=data["content"],
+       images=[image] if image else [],
+       user_id=session["user_id"],
+       category_id=data.get("category_id", 1),
+   )
+   db.session.add(post)
+   db.session.commit()
+   return {"id": post.id}, 201
