@@ -72,3 +72,32 @@ CORS(
    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
 )
+
+db.init_app(app)
+
+
+
+
+@app.before_request
+def make_session_permanent():
+   session.permanent = True
+
+
+
+
+#
+def student_required(f):
+   @wraps(f)
+   def wrapper(*args, **kwargs):
+       app.logger.info(
+           f"Student check: session role = {session.get('role')}, user_id = {session.get('user_id')}"
+       )
+       if session.get("role") != "student":
+           app.logger.warning(
+               f"Access denied: role {session.get('role')} is not student"
+           )
+           return {"error": "Only students allowed"}, 403
+       return f(*args, **kwargs)
+
+
+   return wrapper
