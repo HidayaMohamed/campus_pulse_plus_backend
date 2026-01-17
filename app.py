@@ -300,3 +300,68 @@ def create_post():
    db.session.add(post)
    db.session.commit()
    return {"id": post.id}, 201
+@app.route("/api/posts/<int:id>", methods=["DELETE"])
+def delete_post(id):
+   user_id = session.get("user_id")
+   if not user_id:
+       return {"error": "Unauthorized"}, 401
+   post = Post.query.get_or_404(id)
+   if post.user_id != user_id:
+       return {"error": "You can only delete your own posts"}, 403
+   db.session.delete(post)
+   db.session.commit()
+   return {"message": "Post deleted successfully"}, 200
+
+
+
+
+
+
+@app.route("/api/comments", methods=["POST"])
+def add_comment():
+   data = request.get_json()
+   image = data.get("image")
+   comment = Comment(
+       content=data["content"],
+       images=[image] if image else [],
+       post_id=data["post_id"],
+       user_id=session.get("user_id"),  # None if anonymous
+   )
+   db.session.add(comment)
+   db.session.commit()
+   return {"id": comment.id}, 201
+
+
+
+
+@app.route("/api/comments/<int:id>", methods=["DELETE"])
+def delete_comment(id):
+   comment = Comment.query.get_or_404(id)
+   if session.get("user_id") != comment.user_id:
+       return {"error": "Unauthorized"}, 403
+   db.session.delete(comment)
+   db.session.commit()
+   return {"message": "Comment deleted"}, 200
+
+
+
+
+@app.route("/api/comments/<int:post_id>", methods=["GET"])
+def get_comments(post_id):
+   comments = (
+       Comment.query.filter_by(post_id=post_id).order_by(Comment.created_at).all()
+   )
+   return jsonify(
+       [
+           {
+               "id": c.id,
+               "content": c.content,
+               "images": c.images,
+               "user_id": c.user_id,
+               "created_at": c.created_at,
+           }
+           for c in comments
+       ]
+   )
+
+
