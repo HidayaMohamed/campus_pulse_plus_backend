@@ -29,3 +29,15 @@ class User(db.Model):
         return check_password_hash(self.password_hash, pw)
 
 
+
+class Category(db.Model):
+    __tablename__ = "category"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+
+    posts = db.relationship("Post", back_populates="category")
+
+
+
