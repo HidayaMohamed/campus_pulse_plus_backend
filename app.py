@@ -365,3 +365,78 @@ def get_comments(post_id):
    )
 
 
+
+
+@app.route("/api/reactions", methods=["POST"])
+def add_reaction():
+   app.logger.info(f"Reaction attempt: session user_id = {session.get('user_id')}")
+   data = request.get_json()
+   post_id = data["post_id"]
+   reaction_type = data["reaction_type"]
+   user_id = session.get("user_id")
+   if not user_id:
+       app.logger.warning("No user_id in session for reaction")
+       return {"error": "Not logged in"}, 401
+   existing = Reaction.query.filter_by(post_id=post_id, user_id=user_id).first()
+   if existing:
+       if existing.reaction_type == reaction_type:
+           db.session.delete(existing)
+           user_reaction = None
+       else:
+           existing.reaction_type = reaction_type
+           user_reaction = reaction_type
+   else:
+       db.session.add(
+           Reaction(post_id=post_id, user_id=user_id, reaction_type=reaction_type)
+       )
+       user_reaction = reaction_type
+   db.session.commit()
+   reactions = Reaction.query.filter_by(post_id=post_id).all()
+   return {
+       "likes": sum(1 for r in reactions if r.reaction_type == "like"),
+       "dislikes": sum(1 for r in reactions if r.reaction_type == "dislike"),
+       "user_reaction": user_reaction,
+   }
+
+
+
+
+
+
+@app.route("/api/admin/responses", methods=["POST"])
+@admin_required
+def respond_post():
+   data = request.get_json()
+   if not data.get("post_id"):
+       return {"error": "Post ID is required"}, 400
+
+
+   # Check if response already exists for this post
+   existing = AdminResponse.query.filter_by(post_id=data["post_id"]).first()
+   if existing:
+       return {"error": "Response already exists for this post"}, 400
+
+
+   response = AdminResponse(
+       post_id=data["post_id"], admin_id=session["user_id"], content=data["content"]
+   )
+   db.session.add(response)
+   db.session.commit()
+   return {"message": "Admin response saved"}, 201
+
+
+
+
+@app.route("/api/admin/posts/pending", methods=["GET"])
+@admin_required
+def pending_posts():
+   posts = Post.query.all()
+   return jsonify(
+       [
+           {"id": p.id, "content": p.content, "created_at": p.created_at}
+           for p in posts
+           if not p.admin_responses
+       ]
+   )
+
+
