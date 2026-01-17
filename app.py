@@ -250,3 +250,38 @@ def get_posts():
        return jsonify(data)
    except Exception as e:
        return {"error": "Internal server error"}, 500
+   
+@app.route("/api/posts/<int:id>", methods=["GET"])
+def get_post(id):
+   post = Post.query.get_or_404(id)
+   likes = sum(1 for r in post.reactions if r.reaction_type == "like")
+   dislikes = sum(1 for r in post.reactions if r.reaction_type == "dislike")
+   user_reaction = None
+   if session.get("user_id"):
+       r = Reaction.query.filter_by(post_id=id, user_id=session["user_id"]).first()
+       if r:
+           user_reaction = r.reaction_type
+   return {
+       "id": post.id,
+       "content": post.content,
+       "images": post.images,
+       "category_id": post.category_id,
+       "user_id": post.user_id,
+       "created_at": post.created_at,
+       "likes": likes,
+       "dislikes": dislikes,
+       "user_reaction": user_reaction,
+       "comments": [
+           {
+               "id": c.id,
+               "content": c.content,
+               "images": c.images,
+               "user_id": c.user_id,
+               "created_at": c.created_at,
+           }
+           for c in post.comments
+       ],
+       "admin_response": post.admin_responses[0].content
+       if post.admin_responses
+       else None,
+   }
