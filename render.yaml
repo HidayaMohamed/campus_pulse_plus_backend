@@ -10,6 +10,6 @@ services:
       - key: SECRET_KEY
         value: super_secret_key_for_campus_pulse
       - key: PYTHON_VERSION
-        value: 3.8
+        value: 3.8.18
       - key: CORS_ORIGINS
         value: https://your-frontend-domain.vercel.app,http://localhost:5173,http://127.0.0.1:5173
