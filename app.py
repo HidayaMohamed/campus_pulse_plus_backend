@@ -207,14 +207,18 @@ def current_user():
 
 
 
+@app.route("/")
+def health_check():
+    return {"status": "healthy", "message": "Campus Pulse Backend is running!"}, 200
+
 @app.route("/api/debug-session")
 def debug_session():
-   return {
-       "session_user_id": session.get("user_id"),
-       "session_role": session.get("role"),
-       "all_session_keys": list(session.keys()),
-       "is_logged_in": "user_id" in session,
-   }
+    return {
+        "session_user_id": session.get("user_id"),
+        "session_role": session.get("role"),
+        "all_session_keys": list(session.keys()),
+        "is_logged_in": "user_id" in session,
+    }
 
 
 
@@ -1310,8 +1314,13 @@ def get_user_activity():
 
 
 # Initialize database
-with app.app_context():
-    db.create_all()
+try:
+    with app.app_context():
+        db.create_all()
+        app.logger.info("Database initialized successfully")
+except Exception as e:
+    app.logger.error(f"Database initialization failed: {str(e)}")
+    # Don't crash the app, just log the error
 
 # Check if running in production (Render provides PORT env var)
 if os.environ.get("PORT"):
