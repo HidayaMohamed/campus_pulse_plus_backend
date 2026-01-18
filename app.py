@@ -72,7 +72,7 @@ CORS(
    app,
    supports_credentials=True,
    origins=os.getenv(
-       "CORS_ORIGINS","https://campuspulseplusfrontend-git-main-washiras-projects-fb5072e5.vercel.app,https://campuspulseplusfrontend.vercel.app,http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177"
+       "CORS_ORIGINS","campuspulseplusfrontend-git-main-washiras-projects-fb5072e5.vercel.app, campuspulseplusfrontend.vercel.app"
    ).split(","),
    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
