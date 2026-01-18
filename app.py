@@ -207,14 +207,18 @@ def current_user():
 
 
 
+@app.route("/")
+def health_check():
+    return {"status": "healthy", "message": "Campus Pulse Backend is running!"}, 200
+
 @app.route("/api/debug-session")
 def debug_session():
-   return {
-       "session_user_id": session.get("user_id"),
-       "session_role": session.get("role"),
-       "all_session_keys": list(session.keys()),
-       "is_logged_in": "user_id" in session,
-   }
+    return {
+        "session_user_id": session.get("user_id"),
+        "session_role": session.get("role"),
+        "all_session_keys": list(session.keys()),
+        "is_logged_in": "user_id" in session,
+    }
 
 
 
@@ -1309,16 +1313,20 @@ def get_user_activity():
 
 
 
-if __name__ == "__main__":
+# Initialize database
+try:
     with app.app_context():
         db.create_all()
-    # For local development
-    app.run(host="0.0.0.0", debug=True)
-else:
-    # For production deployment (Render)
-    with app.app_context():
-        db.create_all()
+        app.logger.info("Database initialized successfully")
+except Exception as e:
+    app.logger.error(f"Database initialization failed: {str(e)}")
+    # Don't crash the app, just log the error
 
-    # Get port from environment variable (Render provides this)
-    port = int(os.environ.get("PORT", 5000))
+# Check if running in production (Render provides PORT env var)
+if os.environ.get("PORT"):
+    # Production deployment (Render)
+    port = int(os.environ.get("PORT"))
     app.run(host="0.0.0.0", port=port, debug=False)
+elif __name__ == "__main__":
+    # Local development
+    app.run(host="0.0.0.0", debug=True)
