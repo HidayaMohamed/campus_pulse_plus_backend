@@ -2,6 +2,11 @@
 
 A comprehensive Flask-based backend API for campus safety, engagement, and communication platform.
 
+## Group members: Hidaya, Adonis, Victor, Khalid, Mark bryan and Bradley
+
+## Frontend repository
+This is the URL for the frontend repo: https://github.com/HidayaMohamed/campus_pulse_plus_frontend
+
 ## Features
 
 ### Authentication System
