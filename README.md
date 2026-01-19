@@ -2,7 +2,13 @@
 
 A comprehensive Flask-based backend API for campus safety, engagement, and communication platform.
 
-## Group members: Hidaya, Adonis, Victor, Khalid, Mark bryan and Bradley
+## Group members: 
+Hidaya - https://github.com/HidayaMohamed,
+Adonis - https://github.com/donnyMP8, 
+Victor - https://github.com/wachira567,
+Khalid - https://github.com/KHALIDIIN12, 
+Mark bryan - https://github.com/MarkB-make
+Bradley - https://github.com/brimiq
 
 ## Frontend repository
 This is the URL for the frontend repo: https://github.com/HidayaMohamed/campus_pulse_plus_frontend
@@ -248,32 +254,25 @@ GET /api/categories
 ]
 ```
 
-## Environment Variables
 
-Create a `.env` file with the following:
 
-```env
-# Database
-DATABASE_URI=sqlite:///app.db
+## Live Demo
 
-# Security
-SECRET_KEY=your-super-secret-key
+- Frontend: https://your-frontend-url.vercel.app
+- Backend API: https://your-backend-url.onrender.com
 
-# CORS
-CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 
-# Session
-PERMANENT_SESSION_LIFETIME=604800  # 7 days in seconds
-```
+##  Test Credentials
 
-## Testing
+Use the following accounts to test the application:
 
-```bash
-# Run with debug mode
-python app.py
+### Admin User
+- Email: admin@campus.com
+- Password: admin123
 
-# The API will be available at http://localhost:5000
-```
+### Regular User
+- Email: student1@campus.com
+- Password: password1
 
 ## License
 
